@@ -1,0 +1,14 @@
+{
+    "name": "post-purchase-monetization",
+    "version": "1.0.0",
+    "scripts": {
+        "install-client": "cd frontend && npm install",
+        "install-server": "cd backend && npm install",
+        "build-client": "cd frontend && npm run build",
+        "install": "npm run install-client && npm run install-server",
+        "build": "npm run build-client"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}

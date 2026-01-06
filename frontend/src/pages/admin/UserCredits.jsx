@@ -21,7 +21,7 @@ const UserCredits = () => {
         const fetchUsers = async () => {
             try {
                 // Use port 5001 as currently running
-                const response = await axios.get(`http://localhost:5001/api/admin/users/search?q=${searchTerm}`);
+                const response = await axios.get(`/api/admin/users/search?q=${searchTerm}`);
                 setUsers(response.data);
             } catch (error) {
                 console.error("Error fetching users:", error);
@@ -41,7 +41,7 @@ const UserCredits = () => {
         if (selectedUser) {
             const fetchHistory = async () => {
                 try {
-                    const response = await axios.get(`http://localhost:5001/api/admin/users/${selectedUser._id}/credits`);
+                    const response = await axios.get(`/api/admin/users/${selectedUser._id}/credits`);
                     // response.data = { user: ..., credits: [...] }
                     setCreditHistory(response.data.credits || []);
                 } catch (error) {
@@ -57,7 +57,7 @@ const UserCredits = () => {
         if (!selectedUser || !adjustment.amount) return;
 
         try {
-            await axios.post(`http://localhost:5001/api/admin/users/${selectedUser._id}/credits/adjust`, {
+            await axios.post(`/api/admin/users/${selectedUser._id}/credits/adjust`, {
                 action: adjustment.type,
                 amount: adjustment.amount,
                 reason: adjustment.reason
@@ -67,7 +67,7 @@ const UserCredits = () => {
             setAdjustment({ type: 'issue', amount: '', reason: '' });
 
             // Re-fetch user to get updated balance
-            const response = await axios.get(`http://localhost:5001/api/admin/users/search?q=${selectedUser._id}`);
+            const response = await axios.get(`/api/admin/users/search?q=${selectedUser._id}`);
             if (response.data.length > 0) {
                 // Update the user in the list to reflect new balance immediately
                 const updatedUser = response.data[0];
@@ -76,7 +76,7 @@ const UserCredits = () => {
             }
 
             // Re-fetch history
-            const histResponse = await axios.get(`http://localhost:5001/api/admin/users/${selectedUser._id}/credits`);
+            const histResponse = await axios.get(`/api/admin/users/${selectedUser._id}/credits`);
             setCreditHistory(histResponse.data.credits || []);
 
         } catch (error) {

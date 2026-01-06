@@ -25,7 +25,7 @@ const Promotions = () => {
 
     const fetchPromotions = async () => {
         try {
-            const response = await axios.get('http://localhost:5001/api/admin/promotions');
+            const response = await axios.get('/api/admin/promotions');
             setCampaigns(response.data);
             setLoading(false);
         } catch (error) {
@@ -36,7 +36,7 @@ const Promotions = () => {
 
     const handleCreatePromo = async () => {
         try {
-            await axios.post('http://localhost:5001/api/admin/promotions', newPromo);
+            await axios.post('/api/admin/promotions', newPromo);
             setShowModal(false);
             setNewPromo({ name: '', credits: '', condition: 'First Purchase', startDate: '', endDate: '', targetAudience: 'All Users', status: 'Draft' });
             fetchPromotions();

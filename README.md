@@ -2,15 +2,15 @@
 
 A full-stack MERN application (MongoDB, Express, React, Node.js) designed to monetize the post-purchase experience through dynamic credit wallets, premium upgrades, and targeted campaigns.
 
-## 🚀 Features
+## Features
 
 ### Customer Experience
 - **Post-Purchase Dashboard**: Beautiful, branded page shown immediately after payment.
 - **Future Me Wallet**: Dynamic credit system (rewards locked for 7 days).
 - **Monetization Options**:
-  - ⚡ **Credit Booster**: Double credits instantly (₹49).
-  - 🔓 **Early Unlock**: Unlock credits immediately (₹29).
-  - 👑 **Premium Wallet**: Subscription for no-expiry credits & 2x boost (₹99/mo).
+  - **Credit Booster**: Double credits instantly (₹49).
+  - **Early Unlock**: Unlock credits immediately (₹29).
+  - **Premium Wallet**: Subscription for no-expiry credits & 2x boost (₹99/mo).
 - **Order Tracking**: Visual timeline and map integration.
 - **Helpful Extras**: Non-monetized value adds (guides, surveys).
 
@@ -22,13 +22,13 @@ A full-stack MERN application (MongoDB, Express, React, Node.js) designed to mon
 - **Promotions**: specific campaign management.
 - **Reporting**: Exportable analytics on credit usage and revenue.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: React, Vite, TailwindCSS, Lucide Icons, React Router
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB (Mongoose ODM)
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 - Node.js (v16+)
@@ -51,7 +51,7 @@ npm run dev
 ```
 Client runs on `http://localhost:3000`
 
-## 🔗 API Documentation
+## API Documentation
 
 ### Orders
 - `POST /api/orders`: Create new order (auto-calculates credits).
@@ -67,7 +67,7 @@ Client runs on `http://localhost:3000`
 - `GET /api/admin/credits/stats`: Dashboard analytics.
 - `POST /api/admin/users/:id/credits/adjust`: Manual credit adjustment.
 
-## 💡 Credit Logic
+## Credit Logic
 - **Base Rate**: 5% of order value.
 - **Lock Period**: 7 days from delivery.
 - **Expiry**: 90 days (unless Premium).

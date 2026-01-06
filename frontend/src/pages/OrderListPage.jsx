@@ -14,7 +14,7 @@ const OrderListPage = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await axios.get(`http://localhost:5001/api/orders/user/${DEMO_USER_ID}`);
+                const response = await axios.get(`/api/orders/user/${DEMO_USER_ID}`);
                 setOrders(response.data);
                 setLoading(false);
             } catch (error) {

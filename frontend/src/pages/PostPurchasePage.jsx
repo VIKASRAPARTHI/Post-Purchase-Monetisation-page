@@ -24,13 +24,13 @@ const PostPurchasePage = () => {
         const fetchOrderData = async () => {
             try {
                 // Fetch Settings first to ensure UI is consistent
-                const settingsRes = await axios.get('http://localhost:5001/api/admin/settings');
+                const settingsRes = await axios.get('/api/admin/settings');
                 setSettings(settingsRes.data);
 
                 // Fetch Order
                 // Using hardcoded orderId '123456' from seed data if param is not provided or matches mock default
                 const targetOrderId = orderId || '123456';
-                const response = await axios.get(`http://localhost:5001/api/orders/${targetOrderId}`);
+                const response = await axios.get(`/api/orders/${targetOrderId}`);
                 setOrder(response.data);
 
                 // Initialize credits based on order (Use dynamic potential if available for demo variability)

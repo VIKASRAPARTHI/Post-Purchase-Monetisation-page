@@ -23,7 +23,7 @@ const CreditRules = () => {
 
     const fetchRules = async () => {
         try {
-            const response = await axios.get('http://localhost:5001/api/admin/rules');
+            const response = await axios.get('/api/admin/rules');
             setRules(response.data);
             setLoading(false);
         } catch (error) {
@@ -34,7 +34,7 @@ const CreditRules = () => {
 
     const handleCreateRule = async () => {
         try {
-            await axios.post('http://localhost:5001/api/admin/rules', newRule);
+            await axios.post('/api/admin/rules', newRule);
             setShowModal(false);
             setNewRule({ name: '', conditionType: 'order_value', conditionValue: '', rewardAmount: '', unlockPeriod: 0, isActive: true });
             fetchRules();
@@ -46,7 +46,7 @@ const CreditRules = () => {
 
     const handleToggleRule = async (id) => {
         try {
-            await axios.patch(`http://localhost:5001/api/admin/rules/${id}/toggle`);
+            await axios.patch(`/api/admin/rules/${id}/toggle`);
             setRules(rules.map(r => r._id === id ? { ...r, isActive: !r.isActive } : r));
         } catch (error) {
             console.error("Error toggling rule:", error);
@@ -56,7 +56,7 @@ const CreditRules = () => {
     const handleDeleteRule = async (id) => {
         if (!window.confirm("Are you sure you want to delete this rule?")) return;
         try {
-            await axios.delete(`http://localhost:5001/api/admin/rules/${id}`);
+            await axios.delete(`/api/admin/rules/${id}`);
             setRules(rules.filter(r => r._id !== id));
         } catch (error) {
             console.error("Error deleting rule:", error);

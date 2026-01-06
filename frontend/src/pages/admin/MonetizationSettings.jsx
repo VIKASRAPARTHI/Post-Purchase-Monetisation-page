@@ -27,7 +27,7 @@ const MonetizationSettings = () => {
 
     const fetchSettings = async () => {
         try {
-            const response = await axios.get('http://localhost:5001/api/admin/settings');
+            const response = await axios.get('/api/admin/settings');
             const fetched = response.data;
 
             if (Object.keys(fetched).length > 0) {
@@ -66,7 +66,7 @@ const MonetizationSettings = () => {
 
     const handleSave = async (key, value) => {
         try {
-            await axios.post('http://localhost:5001/api/admin/settings', {
+            await axios.post('/api/admin/settings', {
                 key,
                 value
             });

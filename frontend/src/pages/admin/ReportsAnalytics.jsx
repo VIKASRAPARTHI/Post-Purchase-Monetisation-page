@@ -17,8 +17,8 @@ const ReportsAnalytics = () => {
         const fetchData = async () => {
             try {
                 const [statsRes, trendsRes] = await Promise.all([
-                    axios.get('http://localhost:5001/api/admin/credits/stats'),
-                    axios.get('http://localhost:5001/api/admin/credits/trends')
+                    axios.get('/api/admin/credits/stats'),
+                    axios.get('/api/admin/credits/trends')
                 ]);
                 setStats(statsRes.data);
                 setTrends(trendsRes.data);
