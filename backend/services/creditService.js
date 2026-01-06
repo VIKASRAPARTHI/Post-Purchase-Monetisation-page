@@ -1,14 +1,22 @@
 const Credit = require('../models/Credit');
 const User = require('../models/User');
 const Order = require('../models/Order');
-const pricingService = require('./pricingService');
+const Setting = require('../models/Setting'); // Import Setting
 const { addDays, isPast } = require('date-fns');
 
 const creditService = {
-    // Calculate credits for an order
-    calculateCreditsForOrder(orderAmount) {
-        const rate = pricingService.getCreditRate();
-        return Math.floor(orderAmount * rate); // Round down to integer
+    // Helper to get current rate
+    async getCreditRate() {
+        const setting = await Setting.findOne({ key: 'pointsPer100' });
+        // Default to 5 credits per 100 currency units (0.05) if not set
+        // Admin panel creates 'pointsPer100', e.g. value 5
+        return setting ? (Number(setting.value) / 100) : 0.05;
+    },
+
+    // Calculate credits for an order (Dynamic)
+    async calculateCreditsForOrder(orderAmount) {
+        const rate = await this.getCreditRate();
+        return Math.floor(orderAmount * rate);
     },
 
     // Create initial locked credits for an order
@@ -56,7 +64,11 @@ const creditService = {
         }
 
         const originalAmount = credit.amount;
-        const boostedAmount = originalAmount * 2;
+        // Fetch booster multiplier from settings
+        const setting = await Setting.findOne({ key: 'creditBooster' });
+        const multiplier = setting && setting.value.multiplier ? Number(setting.value.multiplier) : 2;
+
+        const boostedAmount = originalAmount * multiplier;
 
         credit.amount = boostedAmount;
         credit.type = 'boosted';
@@ -101,13 +113,6 @@ const creditService = {
                 lockedCredits += c.amount;
             }
         });
-
-        // We normally don't subtract used credits from "totalCredits" if it represents *balance*.
-        // If 'active' means currently available, then we sum active.
-        // However, if we track 'used' credits in the same collection, we should ensure we only sum 'active'.
-        // NOTE: In a real system, we'd have a ledger. Here we sum 'active' credits.
-        // If we use credits, we should probably change status to 'used' or create a deduction entry.
-        // Let's assume 'active' credits are available balance.
 
         await User.findByIdAndUpdate(userId, {
             'wallet.totalCredits': totalCredits,

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Zap, Unlock, Crown, CheckCircle2, ChevronRight, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
-const MonetizationCards = ({ userId, onUpdate }) => {
+const MonetizationCards = ({ userId, onUpdate, settings, lockedCredits }) => {
     const [loading, setLoading] = useState(null); // 'boost', 'unlock', 'premium'
 
     const handleAction = async (action) => {
@@ -13,6 +13,15 @@ const MonetizationCards = ({ userId, onUpdate }) => {
             if (onUpdate) onUpdate();
         }, 1500);
     };
+
+    if (!settings) return null; // Or skeleton
+
+    const booster = settings.creditBooster || { price: 49, multiplier: 2 };
+    const unlock = settings.earlyUnlock || { price: 29 };
+    const premium = settings.premiumWallet || { price: 99 };
+
+    // Calculate potential boost value
+    const potentialBoostValue = (lockedCredits || 0) * (booster.multiplier || 2);
 
     return (
         <div>
@@ -29,14 +38,14 @@ const MonetizationCards = ({ userId, onUpdate }) => {
                             </div>
                             <div>
                                 <h4 className="font-bold text-gray-900 text-sm">Credit Booster</h4>
-                                <p className="text-xs text-gray-500">Double credits instantly to <span className="text-orange-500 font-bold">₹240</span></p>
+                                <p className="text-xs text-gray-500">Multiply credits by <strong>{booster.multiplier}x</strong> to <span className="text-orange-500 font-bold">₹{potentialBoostValue}</span></p>
                             </div>
                         </div>
                         <button
                             onClick={() => handleAction('boost')}
                             className="bg-orange-400 hover:bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                         >
-                            ₹49
+                            ₹{booster.price}
                         </button>
                     </div>
 
@@ -55,7 +64,7 @@ const MonetizationCards = ({ userId, onUpdate }) => {
                             onClick={() => handleAction('unlock')}
                             className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                         >
-                            ₹29
+                            ₹{unlock.price}
                         </button>
                     </div>
                 </div>
@@ -87,7 +96,7 @@ const MonetizationCards = ({ userId, onUpdate }) => {
                     onClick={() => handleAction('premium')}
                     className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-bold py-3 rounded-lg text-sm shadow-lg shadow-orange-500/20 transition-all relative z-10"
                 >
-                    Upgrade for ₹99/mo
+                    Upgrade for ₹{premium.price}/mo
                 </button>
             </div>
         </div>

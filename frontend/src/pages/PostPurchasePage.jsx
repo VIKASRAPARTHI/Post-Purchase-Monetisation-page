@@ -18,23 +18,29 @@ const PostPurchasePage = () => {
         locked: 0
     });
 
+    const [settings, setSettings] = useState(null);
+
     useEffect(() => {
         const fetchOrderData = async () => {
             try {
+                // Fetch Settings first to ensure UI is consistent
+                const settingsRes = await axios.get('http://localhost:5001/api/admin/settings');
+                setSettings(settingsRes.data);
+
                 // Fetch Order
                 // Using hardcoded orderId '123456' from seed data if param is not provided or matches mock default
                 const targetOrderId = orderId || '123456';
                 const response = await axios.get(`http://localhost:5001/api/orders/${targetOrderId}`);
                 setOrder(response.data);
 
-                // Initialize credits based on order (mock logic for now, or fetch user wallet)
-                if (response.data.creditsEarned) {
-                    setCredits(prev => ({ ...prev, locked: response.data.creditsEarned }));
+                // Initialize credits based on order (Use dynamic potential if available for demo variability)
+                if (response.data.currentPotentialCredits || response.data.creditsEarned) {
+                    setCredits(prev => ({ ...prev, locked: response.data.currentPotentialCredits || response.data.creditsEarned }));
                 }
 
                 setLoading(false);
             } catch (error) {
-                console.error("Error fetching order:", error);
+                console.error("Error fetching data:", error);
                 setLoading(false);
             }
         };
@@ -99,7 +105,12 @@ const PostPurchasePage = () => {
                         <ExclusiveDropCard />
 
                         {/* 3. Grow Credits & Premium Wallet */}
-                        <MonetizationCards userId="user123" onUpdate={handleUpdate} />
+                        <MonetizationCards
+                            userId="user123"
+                            onUpdate={handleUpdate}
+                            settings={settings}
+                            lockedCredits={credits.locked}
+                        />
                     </div>
                 </div>
 

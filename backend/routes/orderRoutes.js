@@ -10,14 +10,16 @@ router.post('/', async (req, res) => {
     try {
         const { userId, items, totalAmount, shippingAddress } = req.body;
 
-        // 1. Create Order
+        // 1. Calculate credits (async now)
+        const creditsEarned = await creditService.calculateCreditsForOrder(totalAmount);
+
         const order = new Order({
             userId,
             orderId: 'ORD-' + uuidv4().substring(0, 8).toUpperCase(),
             items,
             totalAmount,
             shippingAddress,
-            creditsEarned: creditService.calculateCreditsForOrder(totalAmount)
+            creditsEarned
         });
 
         await order.save();
@@ -36,7 +38,20 @@ router.get('/:orderId', async (req, res) => {
     try {
         const order = await Order.findOne({ orderId: req.params.orderId }).populate('userId');
         if (!order) return res.status(404).json({ message: 'Order not found' });
-        res.json(order);
+
+        // Dynamic Requirement: Show what they *would* get now vs what they got
+        const currentRateCredits = await creditService.calculateCreditsForOrder(order.totalAmount);
+
+        // Convert mongoose doc to object to append field
+        const orderObj = order.toObject();
+        orderObj.currentPotentialCredits = currentRateCredits;
+        // The user wanted "it should change on the post purchase pages". 
+        // We will prioritize showing this dynamic value or updating the stored one? 
+        // Usually modifying historical data is bad practice, but for this "dynamic demo" requirement,
+        // let's send it. The frontend can decide which to show.
+        // Actually creditService usually returns int.
+
+        res.json(orderObj);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
