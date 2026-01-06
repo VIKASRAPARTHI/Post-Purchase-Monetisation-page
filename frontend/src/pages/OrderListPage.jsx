@@ -9,7 +9,7 @@ const OrderListPage = () => {
     const [loading, setLoading] = useState(true);
 
     // Hardcoded demo user ID from seed data
-    const DEMO_USER_ID = '695ccc8246c9f3779b0c8bc2';
+    const DEMO_USER_ID = '695cdbf50d8f99c916174689';
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -79,8 +79,8 @@ const OrderListPage = () => {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${order.status === 'delivered' ? 'bg-green-100 text-green-700' :
-                                                order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
-                                                    'bg-yellow-100 text-yellow-800'
+                                            order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                                                'bg-yellow-100 text-yellow-800'
                                             }`}>
                                             {order.status.replace('_', ' ')}
                                         </span>
