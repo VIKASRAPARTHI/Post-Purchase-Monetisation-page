@@ -52,11 +52,21 @@ const seedData = async () => {
         console.log('Cleared Orders, Users, Credits, Transactions');
 
         // Initial Settings if missing
-        await Setting.updateOne(
-            { key: 'creditBooster' },
-            { $set: { value: { price: 49, multiplier: 2, enabled: true, description: 'Double credits instantly' }, updatedAt: new Date() } },
-            { upsert: true }
-        );
+        // Initial Settings if missing
+        const defaultSettings = [
+            { key: 'creditBooster', value: { price: 49, multiplier: 2, enabled: true, description: 'Double credits instantly' } },
+            { key: 'earlyUnlock', value: { price: 29, enabled: true, description: 'Unlock credits immediately' } },
+            { key: 'premiumWallet', value: { price: 99, currency: 'INR', duration: 'monthly', description: 'Premium benefits' } },
+            { key: 'pointsPer100', value: 5 } // 5 points per 100 currency
+        ];
+
+        for (const setting of defaultSettings) {
+            await Setting.updateOne(
+                { key: setting.key },
+                { $set: { value: setting.value, updatedAt: new Date() } },
+                { upsert: true }
+            );
+        }
 
         const users = [];
 

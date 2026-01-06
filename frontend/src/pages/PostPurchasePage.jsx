@@ -99,7 +99,7 @@ const PostPurchasePage = () => {
                     {/* Right Column: Monetization & Rewards */}
                     <div className="lg:col-span-1">
                         {/* 1. Future Reward Card */}
-                        <CreditWalletHero credits={credits} loading={loading} />
+                        <CreditWalletHero credits={credits} loading={loading} orderAmount={order.totalAmount} />
 
                         {/* 2. Exclusive Drop */}
                         <ExclusiveDropCard />

@@ -9,7 +9,7 @@ const OrderListPage = () => {
     const [loading, setLoading] = useState(true);
 
     // Hardcoded demo user ID from seed data
-    const DEMO_USER_ID = '695cdbf50d8f99c916174689';
+    const DEMO_USER_ID = '695ce2dd7e052ae2f176f01d';
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -43,6 +43,7 @@ const OrderListPage = () => {
                         <div className="w-8 h-8 bg-[#EAB308] rounded-lg"></div> LuxeCart
                     </Link>
                     <div className="flex items-center gap-6 text-sm font-medium text-gray-600">
+                        <Link to="/admin/dashboard" className="text-blue-600 hover:text-blue-700 font-bold">Admin Panel</Link>
                         <a href="#" className="text-black font-semibold">My Orders</a>
                         <a href="#" className="hover:text-black">Profile</a>
                         <div className="w-8 h-8 bg-gray-200 rounded-full border border-gray-300"></div>

@@ -28,9 +28,34 @@ const MonetizationSettings = () => {
     const fetchSettings = async () => {
         try {
             const response = await axios.get('http://localhost:5001/api/admin/settings');
-            // Merge defaults with fetched data
-            if (Object.keys(response.data).length > 0) {
-                setSettings(prev => ({ ...prev, ...response.data }));
+            const fetched = response.data;
+
+            if (Object.keys(fetched).length > 0) {
+                setSettings(prev => {
+                    const next = { ...prev };
+
+                    // Safe merge for known sections
+                    ['creditBooster', 'earlyUnlock', 'premiumWallet'].forEach(section => {
+                        if (fetched[section]) {
+                            // If it's the premium wallet, we need to be extra careful about 'benefits'
+                            if (section === 'premiumWallet' && prev.premiumWallet.benefits) {
+                                next[section] = {
+                                    ...prev[section],
+                                    ...fetched[section],
+                                    benefits: {
+                                        ...prev[section].benefits,
+                                        ...(fetched[section].benefits || {})
+                                    }
+                                };
+                            } else {
+                                // Standard shallow merge for the section
+                                next[section] = { ...prev[section], ...fetched[section] };
+                            }
+                        }
+                    });
+
+                    return next;
+                });
             }
             setLoading(false);
         } catch (error) {

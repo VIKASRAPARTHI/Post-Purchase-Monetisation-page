@@ -2,7 +2,7 @@ import React from 'react';
 import { Lock, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 
-const CreditWalletHero = ({ credits, loading }) => {
+const CreditWalletHero = ({ credits, loading, orderAmount }) => {
     return (
         <div className="bg-[#FFF9EC] border border-[#FFE7B9] rounded-xl p-6 mb-6">
             <div className="flex items-center justify-center gap-2 mb-4">
@@ -13,9 +13,9 @@ const CreditWalletHero = ({ credits, loading }) => {
 
             <div className="text-center mb-6">
                 <h2 className="text-xl font-bold text-gray-900 leading-tight">
-                    You've unlocked <span className="text-[#D97706] text-2xl font-extrabold">₹120</span>
+                    You've unlocked <span className="text-[#D97706] text-2xl font-extrabold">₹{credits.locked}</span>
                 </h2>
-                <p className="text-gray-600 text-sm mt-1">in Brand Credits for your <span className="font-bold text-gray-900">₹2500 order</span></p>
+                <p className="text-gray-600 text-sm mt-1">in Brand Credits for your <span className="font-bold text-gray-900">₹{(orderAmount || 0).toLocaleString()} order</span></p>
             </div>
 
             {/* Timeline Progress */}
