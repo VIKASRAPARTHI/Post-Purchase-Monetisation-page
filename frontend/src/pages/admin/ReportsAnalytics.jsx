@@ -1,7 +1,46 @@
-import React from 'react';
-import { Download, Calendar, BarChart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Download, Calendar, BarChart, TrendingUp, DollarSign, Activity } from 'lucide-react';
+import { format } from 'date-fns';
 
 const ReportsAnalytics = () => {
+    const [stats, setStats] = useState({
+        totalIssued: 0,
+        redemptionRate: 0,
+        netRevenue: 0,
+        breakageRate: 0
+    });
+    const [trends, setTrends] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [statsRes, trendsRes] = await Promise.all([
+                    axios.get('http://localhost:5001/api/admin/credits/stats'),
+                    axios.get('http://localhost:5001/api/admin/credits/trends')
+                ]);
+                setStats(statsRes.data);
+                setTrends(trendsRes.data);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching analytics:", error);
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const formatCurrency = (amt) => {
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amt);
+    };
+
+    const formatNumber = (num) => {
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+        return num;
+    };
+
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex justify-between items-center mb-8">
@@ -21,34 +60,57 @@ const ReportsAnalytics = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 {[
-                    { label: 'Total Issued', value: '1.2M', trend: '↗ 12%', color: 'text-green-600' },
-                    { label: 'Redemption Rate', value: '68%', trend: '↗ 4%', color: 'text-blue-600' },
-                    { label: 'Net Revenue', value: '$45.2k', trend: '↘ 1.2%', color: 'text-red-500' },
-                    { label: 'Breakage Rate', value: '12%', sub: 'Expired credits', color: 'text-gray-600' },
+                    { label: 'Total Issued', value: formatNumber(stats.totalIssued), trend: 'Credits Distributed', color: 'text-green-600', icon: Activity },
+                    { label: 'Redemption Rate', value: `${stats.redemptionRate}%`, trend: 'Usage Efficiency', color: 'text-blue-600', icon: TrendingUp },
+                    { label: 'Net Revenue', value: formatCurrency(stats.netRevenue), trend: 'Total Earnings', color: 'text-green-600', icon: DollarSign },
+                    { label: 'Breakage Rate', value: `${stats.breakageRate}%`, trend: 'Expired credits', color: 'text-gray-500', icon: BarChart },
                 ].map((stat, idx) => (
-                    <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                        <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">{stat.label}</p>
+                    <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden">
+                        <div className="flex justify-between items-start mb-2">
+                            <p className="text-gray-500 text-xs font-bold uppercase tracking-wider">{stat.label}</p>
+                            <stat.icon className={`w-5 h-5 opacity-20 ${stat.color.replace('text-', 'bg-')}`} />
+                        </div>
                         <h3 className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-                        <p className={`text-xs font-bold \${stat.color}`}>{stat.trend || stat.sub}</p>
+                        <p className={`text-xs font-bold ${stat.color}`}>{stat.trend}</p>
                     </div>
                 ))}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm h-80 flex flex-col items-center justify-center">
-                    <h3 className="text-gray-900 font-bold mb-auto w-full">Credit Trends</h3>
-                    {/* Chart Placeholder */}
-                    <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-gray-400">
-                        <BarChart className="w-12 h-12 opacity-50" />
-                        <span className="ml-2 font-medium">Chart Visualization Placeholder</span>
+                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm h-80 flex flex-col">
+                    <h3 className="text-gray-900 font-bold mb-4">Daily Issuance Trend (Last 30 Days)</h3>
+                    {/* Simple Bar Visualization */}
+                    <div className="flex-1 flex items-end gap-2 overflow-x-auto pb-2">
+                        {trends.length === 0 ? (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">No trend data available</div>
+                        ) : (
+                            trends.map((item) => (
+                                <div key={item._id} className="flex flex-col items-center gap-1 group min-w-[30px] flex-1">
+                                    <div
+                                        className="w-full bg-blue-100 rounded-t hover:bg-blue-200 transition-all relative"
+                                        style={{ height: `${Math.min((item.total / Math.max(...trends.map(t => t.total))) * 100, 100)}%` }}
+                                    >
+                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                                            ₹{item.total}
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] text-gray-400">{item._id.substr(8)}</span>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
+
                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm h-80 flex flex-col items-center justify-center">
                     <h3 className="text-gray-900 font-bold mb-auto w-full">Revenue Sources</h3>
-                    {/* Chart Placeholder */}
-                    <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-gray-400">
-                        <BarChart className="w-12 h-12 opacity-50" />
-                        <span className="ml-2 font-medium">Chart Visualization Placeholder</span>
+                    {/* Placeholder for Pie Chart */}
+                    <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-gray-400 flex-col gap-2">
+                        <DollarSign className="w-12 h-12 opacity-50" />
+                        <div className="text-center">
+                            <span className="font-medium block">Breakdown</span>
+                            <span className="text-xs">Physical Orders: {((stats.netRevenue - stats.boostRevenue) / stats.netRevenue * 100 || 0).toFixed(0)}%</span>
+                            <span className="text-xs ml-2">Digital/Services: {((stats.boostRevenue) / stats.netRevenue * 100 || 0).toFixed(0)}%</span>
+                        </div>
                     </div>
                 </div>
             </div>
