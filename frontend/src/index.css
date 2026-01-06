@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: system-ui, -apple-system, sans-serif;
+
+  /* Simple Hackathon Theme */
+  --brand-primary: #2563eb;
+  /* Standard Blue */
+  --brand-primary-hover: #1d4ed8;
+  --brand-dark: #1f2937;
+  --brand-surface: #ffffff;
+  --brand-bg: #f3f4f6;
+
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--brand-bg);
+  color: var(--brand-dark);
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded transition-colors;
+  }
+
+  .card {
+    @apply bg-white border border-gray-200 rounded shadow-sm p-4;
+  }
+
+  /* Removed hover effects for simpler feel */
+  .card:hover {
+    @apply shadow-sm transform-none;
+  }
+
+  /* Removed glass effect */
+  .glass-card {
+    @apply bg-white border border-gray-200 rounded shadow-sm;
+  }
+}
