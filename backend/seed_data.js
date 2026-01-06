@@ -78,7 +78,7 @@ const seedData = async () => {
 
         // Generate Data for each user
         for (const user of users) {
-            const numOrders = getRandomInt(1, 6);
+            const numOrders = getRandomInt(8, 15);
             let totalWalletCredits = 0;
 
             for (let i = 0; i < numOrders; i++) {
